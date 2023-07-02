@@ -1,0 +1,242 @@
+body {
+  font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.5;
+  font-weight: 1.5;
+  background-color: #fff0f5;
+}
+
+h1 {
+  font-size: 32px;
+  line-height: 40px;
+  color: #8b008b;
+}
+
+p {
+  color: #8b008b;
+}
+
+h1 a {
+  text-decoration: none;
+}
+
+.App {
+  margin: 0 auto;
+}
+
+.code-box {
+  text-align: left;
+  margin: 0 auto;
+  padding: 10px 10px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.code-link {
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+
+/* for buttons and checkboxes */
+
+.containers {
+  display: flex;
+  justify-content: flex-end;
+  column-gap: 2px;
+}
+
+/* for container shape */
+.container-label {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid #bbb;
+  border-radius: 1px;
+  box-shadow: 0 1px 0 1px rgba(0, 0, 0, 0.04);
+  cursor: pointer;
+  padding: 4px;
+  background-color: #f0ffff;
+  color: #8b008b;
+}
+
+.container-text {
+  display: flex;
+  padding: 0px 4px 0px 4px;
+  font-size: 12px;
+}
+
+
+/* for emoji checkbox */
+
+.container-checkbox {
+  display: flex;
+  padding: 0px 4px 0px 4px;
+  font-size: 15px;
+}
+
+.container-checkbox input[type=checkbox] {
+  display: none;
+}
+
+.container-checkbox input+label {
+  cursor: pointer;
+}
+
+.container-checkbox input+label:after {
+  content: "🍳";
+}
+
+.container-checkbox input:checked+label:after {
+  content: "🍓";
+}
+
+/*.container-checkbox input + label:hover {
+  transform: scale(1.2);
+}
+
+.container-checkbox input:checked + label:hover {
+  transform: scale(1.2);
+}*/
+
+/* for dropdown */
+.container-dropdown {
+  text-align: center;
+  text-align-last: center;
+  border: 0px solid #bbb;
+  border-radius: 0px;
+  cursor: pointer;
+  font-size: 12px;
+  padding: 4px;
+  background-color: #f0ffff;
+  color: #8b008b;
+  appearance: none;
+  background-repeat: no-repeat, repeat;
+  background-position: right 15px top 50%, 0 0;
+  background-size: 12px auto, 100%;
+}
+
+
+/* for creating paste */
+
+.paste-inputs {
+  display: flex;
+  flex-direction: column;
+}
+
+.name-input-row {
+  display: flex;
+  padding: 10px 0px 10px 0px;
+}
+
+.code-input-row {
+  display: flex;
+  height: 100%;
+}
+
+.name-input {
+  display: flex;
+  flex: 1 1 auto;
+}
+
+.code-input {
+  display: flex;
+  flex: 1 1 auto;
+  height: 100%;
+  resize: none;
+}
+
+
+/* for prompt window */
+
+.custom-ui {
+  text-align: center;
+  max-width: 400px;
+  padding: 30px;
+  border-radius: 16px;
+  background: #fff0f5;
+  box-shadow: 0 20px 75px rgba(0, 0, 0, 0.23);
+}
+
+.custom-ui>h1 {
+  margin-top: 0;
+  font-size: 24px;
+}
+
+.custom-ui>p {
+  margin-top: 0;
+  font-size: 12px;
+}
+
+.custom-ui-button {
+  max-width: 160px;
+  padding: 10px;
+  border-radius: 16px;
+  /* border: 1px solid #000; */
+  border: none;
+  margin: 10px;
+  cursor: pointer;
+  background: #f0ffff;
+  color: #8b008b;
+  font-size: 12px;
+}
+
+.react-confirm-alert-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 99;
+  background: rgba(255, 255, 255, 0.8);
+  display: -webkit-flex;
+  display: -moz-flex;
+  display: -ms-flex;
+  display: -o-flex;
+  display: flex;
+  justify-content: center;
+  -ms-align-items: center;
+  align-items: center;
+  opacity: 0;
+  -webkit-animation: react-confirm-alert-fadeIn 0.5s 0.2s forwards;
+  -moz-animation: react-confirm-alert-fadeIn 0.5s 0.2s forwards;
+  -o-animation: react-confirm-alert-fadeIn 0.5s 0.2s forwards;
+  animation: react-confirm-alert-fadeIn 0.5s 0.2s forwards;
+}
+
+@media screen and (orientation:portrait) {
+  .App {
+    padding: 0 15px;
+  }
+
+  .paste-inputs {
+    height: 60vh;
+  }
+
+  .custom-ui {
+    width: 80vw;
+  }
+
+  .custom-ui-button {
+    width: 32vw;
+  }
+}
+
+@media screen and (orientation:landscape) {
+  .App {
+    padding: 0 25px;
+  }
+
+  .paste-inputs {
+    height: 80vh;
+  }
+
+  .custom-ui {
+    width: 20vw;
+  }
+
+  .custom-ui-button {
+    width: 8vw;
+  }
+}
