@@ -1,18 +1,15 @@
 import React, { useEffect, useState } from 'react';
 
-import { doc, getDoc } from "firebase/firestore";
-import { ref, getBytes, getDownloadURL } from "firebase/storage";
-
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { prism } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
-import { db, storage } from './Firebase';
+import { getPaste, getPasteCollection } from 'firebase-utils';
 import { alertBox } from './ConfirmBox';
 
 import './App.css';
 
 function PasteView() {
-  const defaultCodeString = `Welcome to PasteCat!
+  const defaultContent = `Welcome to PasteCat!
   
 You are presented this plain text because either:
 - You are completely new here
@@ -26,44 +23,35 @@ Please feel free to:
 
   const [showLineNumbers, setShowLineNumbers] = useState(false);
   const [pasteName, setPasteName] = useState("");
-  const [downloadUrl, setDownloadUrl] = useState("/");
-  const [codeString, setCodeString] = useState("");
   const [language, setLanguage] = useState("");
-
-  const fetchPasteStorage = (pastePath) => {
-    const storageRef = ref(storage, pastePath);
-    getDownloadURL(storageRef).then((url) => {
-      setDownloadUrl(url);
-    });
-    getBytes(storageRef).then((bytes) => {
-      const decoder = new TextDecoder("utf-8");
-      setCodeString(decoder.decode(bytes).trimEnd());
-    });
-  };
+  const [downloadUrl, setDownloadUrl] = useState("");
+  const [content, setContent] = useState("");
 
   const populateDefaultPaste = () => {
     setPasteName("");
     setLanguage("plaintext");
     setDownloadUrl("");
-    setCodeString(defaultCodeString);
+    setContent(defaultContent);
   };
 
-  const fetchPasteCollection = (pasteId) => {
+  const fetchPasteFromFirebase = (pasteId) => {
     if (!pasteId) {
       populateDefaultPaste();
-      return;
+    } else {
+      getPasteCollection(pasteId)
+        .then((docData) => {
+          setPasteName(docData.pasteName);
+          setLanguage(docData.language);
+          getPaste(pasteId, docData.pasteName).then((storageData) => {
+            setDownloadUrl(storageData.downloadUrl);
+            setContent(storageData.content);
+          });
+        })
+        .catch((error) => {
+          console.error(error);
+          populateDefaultPaste();
+        });
     }
-    getDoc(doc(db, "pastes", pasteId)).then((docSnap) => {
-      if (docSnap.exists()) {
-        const data = docSnap.data();
-        setPasteName(data.name);
-        setLanguage(data.language);
-        fetchPasteStorage(pasteId + "/" + data.name);
-      } else {
-        console.error("Paste ID " + pasteId + " does not exist!");
-        populateDefaultPaste();
-      }
-    });
   };
 
   const handleCheckbox = (e) => {
@@ -71,7 +59,7 @@ Please feel free to:
   };
 
   const handleClipboard = (e) => {
-    navigator.clipboard.writeText(codeString).then(() => {
+    navigator.clipboard.writeText(content).then(() => {
       alertBox("🐈 PasteCat says:", "Copied current paste to clipboard!");
     });
   };
@@ -92,7 +80,7 @@ Please feel free to:
   useEffect(() => {
     const searchParams = new URLSearchParams(window.location.search);
     const pasteId = searchParams.get("p");
-    fetchPasteCollection(pasteId);
+    fetchPasteFromFirebase(pasteId);
   });
 
   return (
@@ -123,7 +111,7 @@ Please feel free to:
           customStyle={pasteBgStyle}
           showLineNumbers={showLineNumbers}
         >
-          {codeString}
+          {content}
         </SyntaxHighlighter>
       </div>
     </div>

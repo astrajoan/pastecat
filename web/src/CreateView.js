@@ -1,12 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from "react-router-dom";
 
-import { collection, addDoc } from "firebase/firestore";
-import { ref, uploadString } from "firebase/storage";
-
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 
-import { db, storage } from './Firebase';
+import { storePaste } from 'firebase-utils';
 import { alertBox, choiceBox } from './ConfirmBox';
 
 import './App.css';
@@ -19,48 +16,41 @@ function CreateView() {
   const defaultLanguage = "select-language";
 
   const [pasteName, setPasteName] = useState(defaultPasteName);
-  const [codeString, setCodeString] = useState("");
   const [language, setLanguage] = useState(defaultLanguage);
+  const [content, setContent] = useState("");
   const [pasteId, setPasteId] = useState("");
 
   const handleGenerate = () => {
-    if (codeString === "") {
+    if (content === "") {
       alertBox("🐈 PasteCat says:", "Cannot create empty paste!");
     } else {
       choiceBox(
         "🐈 PasteCat kindly asks:",
         "Are you done editing?",
-        addPasteToStorage
+        addPasteToStorage,
       );
     }
   };
 
   const addPasteToStorage = () => {
-    addDoc(collection(db, "pastes"), {
-      name: pasteName,
-      language: (language === defaultLanguage ? "plaintext" : language)
-    }).then((pasteIdRef) => {
-      const newPasteId = pasteIdRef.id;
-      setPasteId(newPasteId);
-      const pastePath = newPasteId + "/" + pasteName;
-      const storageRef = ref(storage, pastePath);
-      uploadString(storageRef, codeString).then(
-        (value) => navigate("/?p=" + newPasteId),
-        (error) => {
-          switch (error.code) {
-            case 'storage/canceled':
-              console.error("Generation cancelled.");
-              break;
-            case 'storage/server-file-wrong-size':
-              console.error("File size mismatch, try uploading again.");
-              break;
-            default:
-              console.error("An unknown error occurred.");
-              break;
-          }
+    storePaste(pasteName, language, content)
+      .then((data) => {
+        setPasteId(data.pasteId);
+        navigate("/?p=" + data.pasteId);
+      })
+      .catch((error) => {
+        switch (error.code) {
+          case 'storage/canceled':
+            console.error("Generation cancelled.");
+            break;
+          case 'storage/server-file-wrong-size':
+            console.error("File size mismatch, try uploading again.");
+            break;
+          default:
+            console.error("An unknown error occurred.");
+            break;
         }
-      );
-    });
+      });
   };
 
   return (
@@ -104,7 +94,7 @@ function CreateView() {
               type="text"
               className="code-input"
               placeholder="Enter your paste here"
-              onChange={(e) => setCodeString(e.target.value)}
+              onChange={(e) => setContent(e.target.value)}
             />
           </div>
         </div>
