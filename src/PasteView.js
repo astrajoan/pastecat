@@ -1,18 +1,16 @@
 import React, { useEffect, useState } from 'react';
 
-import { doc, getDoc } from "firebase/firestore";
-import { ref, getBytes, getDownloadURL } from "firebase/storage";
-
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { prism } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
-import { db, storage } from './Firebase';
+import { getPaste, getPasteCollection } from 'pastecat-utils';
+
 import { alertBox } from './ConfirmBox';
 
 import './App.css';
 
 function PasteView() {
-  const defaultCodeString = `Welcome to PasteCat!
+  const defaultContent = `Welcome to PasteCat!
   
 You are presented this plain text because either:
 - You are completely new here
@@ -26,55 +24,45 @@ Please feel free to:
 
   const [showLineNumbers, setShowLineNumbers] = useState(false);
   const [pasteName, setPasteName] = useState("");
-  const [downloadUrl, setDownloadUrl] = useState("/");
-  const [codeString, setCodeString] = useState("");
+  const [downloadUrl, setDownloadUrl] = useState("");
+  const [content, setContent] = useState("");
   const [language, setLanguage] = useState("");
-
-  const fetchPasteStorage = (pastePath) => {
-    const storageRef = ref(storage, pastePath);
-    getDownloadURL(storageRef).then((url) => {
-      setDownloadUrl(url);
-    });
-    getBytes(storageRef).then((bytes) => {
-      const decoder = new TextDecoder("utf-8");
-      setCodeString(decoder.decode(bytes).trimEnd());
-    });
-  };
 
   const populateDefaultPaste = () => {
     setPasteName("");
     setLanguage("plaintext");
     setDownloadUrl("");
-    setCodeString(defaultCodeString);
+    setContent(defaultContent);
   };
 
-  const fetchPasteCollection = (pasteId) => {
+  const fetchPasteFromStorage = async (pasteId) => {
     if (!pasteId) {
       populateDefaultPaste();
       return;
     }
-    getDoc(doc(db, "pastes", pasteId)).then((docSnap) => {
-      if (docSnap.exists()) {
-        const data = docSnap.data();
-        setPasteName(data.name);
-        setLanguage(data.language);
-        fetchPasteStorage(pasteId + "/" + data.name);
-      } else {
-        console.error("Paste ID " + pasteId + " does not exist!");
-        populateDefaultPaste();
-      }
-    });
+    try {
+      const { pasteName, language } = await getPasteCollection(pasteId);
+      setPasteName(pasteName);
+      setLanguage(language);
+      const { downloadUrl, content } = await getPaste(pasteId, pasteName);
+      setDownloadUrl(downloadUrl);
+      setContent(content);
+    } catch (error) {
+      console.error("An error occured: " + error.message);
+      populateDefaultPaste();
+    }
   };
 
-  const handleCheckbox = (e) => {
-    setShowLineNumbers(e.target.checked);
+  const handleClipboard = async (e) => {
+    await navigator.clipboard.writeText(content);
+    alertBox("🐈 PasteCat says:", "Copied current paste to clipboard!");
   };
 
-  const handleClipboard = (e) => {
-    navigator.clipboard.writeText(codeString).then(() => {
-      alertBox("🐈 PasteCat says:", "Copied current paste to clipboard!");
-    });
-  };
+  useEffect(() => {
+    const searchParams = new URLSearchParams(window.location.search);
+    const pasteId = searchParams.get("p");
+    fetchPasteFromStorage(pasteId);
+  });
 
   const renderDownloadLink = () => {
     if (downloadUrl) {
@@ -88,12 +76,6 @@ Please feel free to:
       <span className="container-text">Download not available</span>
     )
   };
-
-  useEffect(() => {
-    const searchParams = new URLSearchParams(window.location.search);
-    const pasteId = searchParams.get("p");
-    fetchPasteCollection(pasteId);
-  });
 
   return (
     <div className="App">
@@ -111,7 +93,11 @@ Please feel free to:
           </div>
           <label className="container-label" htmlFor="checkbox">
             <div className="container-checkbox">
-              <input id="checkbox" type="checkbox" onChange={handleCheckbox} />
+              <input
+                id="checkbox"
+                type="checkbox"
+                onChange={(e) => setShowLineNumbers(e.target.checked)}
+              />
               <label htmlFor="checkbox" />
             </div>
             <span className="container-text">Show line numbers</span>
@@ -123,7 +109,7 @@ Please feel free to:
           customStyle={pasteBgStyle}
           showLineNumbers={showLineNumbers}
         >
-          {codeString}
+          {content}
         </SyntaxHighlighter>
       </div>
     </div>

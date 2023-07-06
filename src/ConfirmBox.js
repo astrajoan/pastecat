@@ -5,9 +5,9 @@ import 'react-confirm-alert/src/react-confirm-alert.css';
 
 const confirmButtons = (yesMsg, onClose, noMsg, yesOp) => {
   if (yesMsg && noMsg) {
-    const closeAndMakeOp = () => {
+    const closeAndMakeOp = async () => {
       onClose();
-      yesOp();
+      await yesOp();
     };
     return (
       <div>

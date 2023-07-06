@@ -1,8 +1,8 @@
 import { render, screen } from '@testing-library/react';
 import App from './App';
 
-test('renders learn react link', () => {
+test('renders PasteCat', () => {
   render(<App />);
-  const linkElement = screen.getByText(/learn react/i);
-  expect(linkElement).toBeInTheDocument();
+  const welcomeElement = screen.getByText(/Welcome to PasteCat/i);
+  expect(welcomeElement).toBeInTheDocument();
 });
