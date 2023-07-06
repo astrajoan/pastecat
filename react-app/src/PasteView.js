@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { prism } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import prism from 'react-syntax-highlighter/dist/esm/styles/prism/prism.js';
 
 import { getPaste, getPasteCollection } from 'pastecat-utils';
 
-import { alertBox } from './ConfirmBox';
+import { alertBox } from './ConfirmBox.js';
 
 import './App.css';
 

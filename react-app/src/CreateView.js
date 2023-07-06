@@ -5,7 +5,7 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 
 import { storePaste } from 'pastecat-utils';
 
-import { alertBox, choiceBox } from './ConfirmBox';
+import { alertBox, choiceBox } from './ConfirmBox.js';
 
 import './App.css';
 

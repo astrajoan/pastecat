@@ -2,6 +2,7 @@
   "name": "pastecat",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "dependencies": {
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
@@ -19,9 +20,8 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "prestart": "cp ../config.json node_modules/pastecat-utils/",
+    "prepare": "cp ../config.js node_modules/pastecat-utils/",
     "start": "react-scripts start",
-    "prebuild": "cp ../config.json node_modules/pastecat-utils/",
     "build": "react-scripts build",
     "test": "react-scripts test --transformIgnorePatterns 'node_modules/(?!.*)/'",
     "eject": "react-scripts eject"

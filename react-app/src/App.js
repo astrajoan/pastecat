@@ -1,9 +1,9 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
-import CreateView from './CreateView';
-import PasteView from './PasteView';
-import NotFoundView from './NotFoundView';
+import CreateView from './CreateView.js';
+import PasteView from './PasteView.js';
+import NotFoundView from './NotFoundView.js';
 
 function App() {
   return (
