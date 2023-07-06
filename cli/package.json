@@ -1,0 +1,19 @@
+{
+  "name": "pastecat-cli",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "",
+  "main": "pastecat.js",
+  "scripts": {
+    "prepare": "cp ../config.json node_modules/pastecat-utils/",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "astrajoan",
+  "license": "ISC",
+  "dependencies": {
+    "chalk": "^5.3.0",
+    "commander": "^11.0.0",
+    "pastecat-utils": "github:astrajoan/pastecat-utils"
+  }
+}

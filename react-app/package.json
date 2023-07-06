@@ -19,9 +19,9 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "prestart": "cp ./config.json node_modules/pastecat-utils/",
+    "prestart": "cp ../config.json node_modules/pastecat-utils/",
     "start": "react-scripts start",
-    "prebuild": "cp ./config.json node_modules/pastecat-utils/",
+    "prebuild": "cp ../config.json node_modules/pastecat-utils/",
     "build": "react-scripts build",
     "test": "react-scripts test --transformIgnorePatterns 'node_modules/(?!.*)/'",
     "eject": "react-scripts eject"
