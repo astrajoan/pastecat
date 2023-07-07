@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 
-import { storePaste } from 'pastecat-utils';
+import { storePaste } from 'pastecat-utils/firebase.js';
 
 import { alertBox, choiceBox } from './ConfirmBox.js';
 
@@ -11,10 +11,15 @@ import './App.css';
 
 const CreateView = () => {
   const navigate = useNavigate();
-  const supportedLanguages = SyntaxHighlighter.supportedLanguages;
 
   const defaultPasteName = "untitled_pastecat";
   const defaultLanguage = "select-language";
+  const plainTextLanguage = "plaintext";
+
+  const supportedLanguages = [
+    ...SyntaxHighlighter.supportedLanguages,
+    plainTextLanguage,
+  ].sort();
 
   const [pasteName, setPasteName] = useState(defaultPasteName);
   const [content, setContent] = useState("");
@@ -35,7 +40,11 @@ const CreateView = () => {
 
   const handleStorePaste = async () => {
     try {
-      const newPasteId = await storePaste(pasteName, language, content);
+      const newPasteId = await storePaste(
+        pasteName,
+        language === defaultLanguage ? plainTextLanguage : language,
+        content,
+      );
       setPasteId(newPasteId);
       navigate("/?p=" + newPasteId);
     } catch (error) {

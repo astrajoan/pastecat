@@ -4,7 +4,11 @@ import * as fs from 'fs/promises';
 import { Command } from 'commander/esm.mjs';
 import chalk from 'chalk';
 
-import { getPasteCollection, getPaste, storePaste } from 'pastecat-utils';
+import {
+  getPasteCollection,
+  getPaste,
+  storePaste,
+} from 'pastecat-utils/firebase.js';
 
 const program = new Command();
 program.name('pastecat');

@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import prism from 'react-syntax-highlighter/dist/esm/styles/prism/prism.js';
 
-import { getPaste, getPasteCollection } from 'pastecat-utils';
+import { getPaste, getPasteCollection } from 'pastecat-utils/firebase.js';
 
 import { alertBox } from './ConfirmBox.js';
 
