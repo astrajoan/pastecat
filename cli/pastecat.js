@@ -9,6 +9,7 @@ import {
   getPaste,
   storePaste,
 } from 'pastecat-utils/firebase.js';
+import { getAutoLanguage } from 'pastecat-utils/language.js';
 
 const program = new Command();
 program.name('pastecat');
@@ -47,7 +48,7 @@ const handleGetPaste = async (pasteId) => {
 const handleStorePaste = async (filepath, options) => {
     const content = await fs.readFile(filepath, 'utf8');
     const name = filepath.split('/').pop();
-    const lang = options.language? options.language : name.split('.').pop();
+    const lang = options.language ? options.language : getAutoLanguage(name);
     const pasteId = await storePaste(name, lang, content);
     logSuccess(pasteId);
 };

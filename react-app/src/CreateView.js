@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate } from "react-router-dom";
 
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 
 import { storePaste } from 'pastecat-utils/firebase.js';
+import { getAutoLanguage } from 'pastecat-utils/language.js';
 
 import { alertBox, choiceBox } from './ConfirmBox.js';
 
@@ -21,13 +22,32 @@ const CreateView = () => {
     plainTextLanguage,
   ].sort();
 
-  const [pasteName, setPasteName] = useState(defaultPasteName);
+  const [pasteName, setPasteName] = useState("");
   const [content, setContent] = useState("");
   const [language, setLanguage] = useState(defaultLanguage);
   const [pasteId, setPasteId] = useState("");
+  const [userSelectLanguage, setUserSelectLanguage] = useState(false);
+  const userSelectLanguageRef = useRef(userSelectLanguage);
+
+  const decideLanguage = (currentPasteName) => {
+    var lang = language;
+    if (!userSelectLanguageRef.current) {
+      lang = getAutoLanguage(currentPasteName);
+      setLanguage(lang);
+    }
+    return lang;
+  };
+
+  const handleLanguage = (e) => {
+    const lang = e.target.value;
+    setLanguage(lang);
+    userSelectLanguageRef.current = lang === defaultLanguage;
+    setUserSelectLanguage(lang === defaultLanguage);
+  };
 
   const handleGenerate = async () => {
-    if (content === "") {
+    if (!content.trim()) {
+      setContent("");
       alertBox("🐈 PasteCat says:", "Cannot create empty paste!");
     } else {
       choiceBox(
@@ -41,8 +61,8 @@ const CreateView = () => {
   const handleStorePaste = async () => {
     try {
       const newPasteId = await storePaste(
-        pasteName,
-        language === defaultLanguage ? plainTextLanguage : language,
+        pasteName || defaultPasteName,
+        decideLanguage(pasteName || defaultPasteName),
         content,
       );
       setPasteId(newPasteId);
@@ -62,6 +82,16 @@ const CreateView = () => {
     }
   };
 
+  useEffect(() => {
+    const input = document.getElementById("paste-name");
+    let timeout;
+    input.addEventListener("keyup", () => {
+      const currentPasteName = input.value || defaultPasteName;
+      clearTimeout(timeout);
+      timeout = setTimeout(() => decideLanguage(currentPasteName), 1000);
+    });
+  }, []);
+
   return (
     <div className="App">
       <div className="code-box">
@@ -74,7 +104,7 @@ const CreateView = () => {
               id="language"
               className="container-dropdown"
               value={language}
-              onChange={(e) => setLanguage(e.target.value)}
+              onChange={handleLanguage}
             >
               <option value={defaultLanguage}>Select a language</option>
               {supportedLanguages.map((lang) => (
@@ -93,6 +123,7 @@ const CreateView = () => {
               id="paste-name"
               type="text"
               className="name-input"
+              value={pasteName}
               placeholder={defaultPasteName}
               onChange={(e) => setPasteName(e.target.value)}
             />
@@ -102,6 +133,7 @@ const CreateView = () => {
               id="paste-content"
               type="text"
               className="code-input"
+              value={content}
               placeholder="Enter your paste here"
               onChange={(e) => setContent(e.target.value)}
             />
