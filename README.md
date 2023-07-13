@@ -9,7 +9,7 @@ the root directory of this repository in order to build/run any applications!
 
 ## CLI tool usage
 
-To install and run the cli package, run:
+To install and use the cli package, run:
 
 ```
 $ cd cli && sudo ./install.sh
