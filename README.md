@@ -13,4 +13,7 @@ To install the cli package, run:
 
 ```
 $ cd cli && sudo ./install.sh
+$ pastecat get <pasteId>
+$ pastecat store <filepath>
+$ cat <output> | pastecat store
 ```
