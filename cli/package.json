@@ -9,6 +9,7 @@
     "pastecat": "pastecat.js"
   },
   "scripts": {
+    "prepare": "cp ../config.js node_modules/pastecat-utils/",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "astrajoan",
