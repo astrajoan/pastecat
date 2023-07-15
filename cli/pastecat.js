@@ -29,7 +29,7 @@ const logSuccess = (pasteId) => {
 };
 
 // action handles
-const handleGetPaste = async (pasteId) => {
+const handleGetPaste = async (pasteId, options) => {
     // TODO?: change to get multiple docs from collection
     if (!pasteId) {
         throw new Error("Paste ID cannot be empty!");
@@ -41,8 +41,13 @@ const handleGetPaste = async (pasteId) => {
     const value = await getPaste(pasteId, name);
 
     const content = value.content;
-    await fs.writeFile(name, content);
-    log(chalk.green("File has been saved to: " + it(name) + "!"));
+    if (!options.print) {
+        await fs.writeFile(name, content);
+        log(chalk.green("File has been saved to: " + it(name) + "!"));
+    } else {
+        process.stdout.write(content + "\n");
+    }
+    
 };
 
 const handleStorePaste = async (filepath, options) => {
@@ -66,7 +71,11 @@ const getPasteCatCommand = () => {
     get
         .description('download from pastecat')
         .argument('<pasteId>', 'id to download pastecat from')
-        .action(async (pasteId) => await handleGetPaste(pasteId));
+        .option('-p, --print',
+            'if provided, paste will be sent to stdout instead of being saved')
+        .action(async (pasteId, options) => {
+            await handleGetPaste(pasteId, options);
+        });
     return get;
 };
 
@@ -95,7 +104,7 @@ try {
         process.exit(0);
     } else {
         process.stdin.on('readable', async () => {
-            const chunk = this.read();
+            const chunk = process.stdin.read();
             if (chunk !== null) stdinMsg += chunk;
         });
         process.stdin.on('end', async () => {
