@@ -34,3 +34,11 @@ To generate new pastecat with stdout:
 ```
 $ echo <output> | pastecat store
 ```
+
+## Contributors
+
+<a href="https://github.com/astrajoan/pastecat/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=astrajoan/pastecat" />
+</a>
+
+Made with [contrib.rocks](https://contrib.rocks).
