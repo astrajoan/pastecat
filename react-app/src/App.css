@@ -38,6 +38,15 @@ h1 a {
   line-height: 1.5;
 }
 
+.ReactVirtualized__Grid {
+  overflow-x: auto !important;
+}
+
+.ReactVirtualized__Grid__innerScrollContainer {
+  min-height: 100% !important;
+  overflow-x: visible !important;
+}
+
 
 /* for buttons and checkboxes */
 
@@ -229,7 +238,7 @@ h1 a {
   }
 
   .paste-inputs {
-    height: 80vh;
+    height: 82vh;
   }
 
   .custom-ui {
