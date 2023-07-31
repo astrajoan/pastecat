@@ -13,12 +13,12 @@ h1 {
   color: #8b008b;
 }
 
-p {
-  color: #8b008b;
-}
-
 h1 a {
   text-decoration: none;
+}
+
+p {
+  color: #8b008b;
 }
 
 .App {
@@ -31,11 +31,6 @@ h1 a {
   padding: 10px 10px;
   margin-top: 10px;
   margin-bottom: 10px;
-}
-
-.code-link {
-  font-size: 12px;
-  line-height: 1.5;
 }
 
 .ReactVirtualized__Grid {
@@ -54,6 +49,23 @@ h1 a {
   display: flex;
   justify-content: flex-end;
   column-gap: 2px;
+}
+
+.containers-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 50px;
+  padding-top: 20px;
+}
+
+.containers-signin {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  column-gap: 10px;
+  padding: 0px;
+  line-height: 0.5;
 }
 
 /* for container shape */
@@ -220,7 +232,7 @@ h1 a {
   }
 
   .paste-inputs {
-    height: 60vh;
+    height: 56vh;
   }
 
   .custom-ui {

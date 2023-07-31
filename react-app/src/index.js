@@ -1,5 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+
+import { GoogleOAuthProvider } from '@react-oauth/google';
+
+import { googleApiReactClientId } from 'pastecat-utils/config.js';
+
 import './index.css';
 import App from './App.js';
 import reportWebVitals from './reportWebVitals.js';
@@ -7,7 +12,9 @@ import reportWebVitals from './reportWebVitals.js';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <App />
+    <GoogleOAuthProvider clientId={googleApiReactClientId}>
+      <App />
+    </GoogleOAuthProvider>
   </React.StrictMode>
 );
 

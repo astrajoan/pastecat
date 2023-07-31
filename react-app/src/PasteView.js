@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
+import { getAuth } from 'firebase/auth';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import prism from 'react-syntax-highlighter/dist/esm/styles/prism/prism.js';
 
@@ -7,6 +8,7 @@ import { getPaste, getPasteCollection } from 'pastecat-utils/firebase.js';
 
 import { alertBox } from './ConfirmBox.js';
 import { useWindowDimensions } from './Dimension.js';
+import { renderCommonHeader } from './Header.js';
 import { virtualizedRenderer } from './VirtualRenderer.js';
 
 import './App.css';
@@ -23,17 +25,20 @@ Please feel free to:
 - Double check your paste ID to make sure it's the correct one`;
 
   const pasteBgStyle = { background: "#fdfdfd" };
-  const rowHeight = 18;
+
   const { width, height } = useWindowDimensions();
+  const isLandscape = width > height;
+  const rowHeight = 18;
 
   const [showLineNumbers, setShowLineNumbers] = useState(false);
   const [pasteName, setPasteName] = useState("");
   const [downloadUrl, setDownloadUrl] = useState("");
   const [content, setContent] = useState("");
   const [language, setLanguage] = useState("");
+  const [user, setUser] = useState(null);
 
   const getBoxHeight = () => {
-    const multiplier = width > height ? 0.82 : 0.64;
+    const multiplier = isLandscape ? 0.82 : 0.58;
     return Math.floor(height * multiplier / rowHeight) * rowHeight;
   };
 
@@ -68,6 +73,8 @@ Please feel free to:
   };
 
   useEffect(() => {
+    getAuth().onAuthStateChanged((user) => setUser(user));
+
     const searchParams = new URLSearchParams(window.location.search);
     const pasteId = searchParams.get("p");
     fetchPasteFromStorage(pasteId);
@@ -89,8 +96,7 @@ Please feel free to:
   return (
     <div className="App">
       <div className="code-box">
-        <h1>PasteCat <a href="/create/">🐿️ 🐖</a></h1>
-        <p>Brought to you by 🍳 and 🍓 with ❤️</p>
+        {renderCommonHeader(user, isLandscape)}
         <div className="containers">
           <div className="container-label" onClick={handleClipboard}>
             <span className="container-checkbox">📎</span>

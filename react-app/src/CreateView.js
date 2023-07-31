@@ -1,17 +1,23 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { useNavigate } from "react-router-dom";
 
+import { getAuth } from 'firebase/auth';
+import { useNavigate } from "react-router-dom";
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 
 import { storePaste } from 'pastecat-utils/firebase.js';
 import { getAutoLanguage } from 'pastecat-utils/language.js';
 
 import { alertBox, choiceBox } from './ConfirmBox.js';
+import { useWindowDimensions } from './Dimension.js';
+import { renderCommonHeader } from './Header.js';
 
 import './App.css';
 
 const CreateView = () => {
   const navigate = useNavigate();
+
+  const { width, height } = useWindowDimensions();
+  const isLandscape = width > height;
 
   const defaultPasteName = "untitled_pastecat";
   const defaultLanguage = "select-language";
@@ -26,6 +32,8 @@ const CreateView = () => {
   const [content, setContent] = useState("");
   const [language, setLanguage] = useState(defaultLanguage);
   const [pasteId, setPasteId] = useState("");
+  const [user, setUser] = useState(null);
+
   const [userSelectLanguage, setUserSelectLanguage] = useState(false);
   const userSelectLanguageRef = useRef(userSelectLanguage);
 
@@ -41,14 +49,16 @@ const CreateView = () => {
   const handleLanguage = (e) => {
     const lang = e.target.value;
     setLanguage(lang);
-    userSelectLanguageRef.current = lang === defaultLanguage;
-    setUserSelectLanguage(lang === defaultLanguage);
+    userSelectLanguageRef.current = lang !== defaultLanguage;
+    setUserSelectLanguage(userSelectLanguageRef.current);
   };
 
   const handleGenerate = async () => {
     if (!content.trim()) {
       setContent("");
       alertBox("🐈 PasteCat says:", "Cannot create empty paste!");
+    } else if (!user) {
+      alertBox("🐈 PasteCat says:", "Please login to create paste!");
     } else {
       choiceBox(
         "🐈 PasteCat kindly asks:",
@@ -83,6 +93,8 @@ const CreateView = () => {
   };
 
   useEffect(() => {
+    getAuth().onAuthStateChanged((user) => setUser(user));
+
     const input = document.getElementById("paste-name");
     let timeout;
     input.addEventListener("keyup", () => {
@@ -95,8 +107,7 @@ const CreateView = () => {
   return (
     <div className="App">
       <div className="code-box">
-        <h1>PasteCat <a href="/create/">🐿️ 🐖</a></h1>
-        <p>Brought to you by 🍳 and 🍓 with ❤️</p>
+        {renderCommonHeader(user, isLandscape)}
         <div className="containers">
           <div className="container-label">
             <span className="container-checkbox">✍️</span>
