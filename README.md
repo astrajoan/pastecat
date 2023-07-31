@@ -17,6 +17,13 @@ $ cd cli && sudo ./install.sh
 ```
 
 ### Examples
+
+Initialize user profile:
+
+```
+$ pastecat init
+```
+
 To get a paste with pasteId:
 
 ```
