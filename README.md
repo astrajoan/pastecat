@@ -13,7 +13,7 @@ the root directory of this repository in order to build/run any applications!
 To install the cli package, run:
 
 ```
-$ cd cli && sudo ./install.sh
+$ cd cli && npm install && sudo ./install.sh
 ```
 
 ### Examples

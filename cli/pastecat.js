@@ -71,8 +71,8 @@ const handleStorePaste = async (filepath, options) => {
 const handleStorePasteFromStdin = async (content, options) => {
     await loginFirebase();
 
-    const lang = options.language? options.language : 'plaintext';
-    const name = options.pastename? options.pastename : "untitled_pastecat";
+    const lang = options.language ? options.language : 'plaintext';
+    const name = options.pastename ? options.pastename : "untitled_pastecat";
     const pasteId = await storePaste(name, lang, content);
     logSuccess(pasteId);
 };
@@ -89,8 +89,8 @@ const pollForToken = async (deviceCode, time, maxRetries) => {
                 params: {
                     ...googleApiConfig,
                     code: deviceCode,
-                    grant_type: 'http://oauth.net/grant_type/device/1.0'
-                }
+                    grant_type: 'http://oauth.net/grant_type/device/1.0',
+                },
             });
             return poll;
         } catch (error) {
@@ -101,7 +101,8 @@ const pollForToken = async (deviceCode, time, maxRetries) => {
 
 const loginFirebase = async () => {
     try {
-        const data = await fs.readFile(os.homedir() + '/.pastecat.json', 'utf8');
+        const filename = os.homedir() + '/.pastecat.json';
+        const data = await fs.readFile(filename, 'utf8');
         const tokens = JSON.parse(data);
         const refreshToken = tokens.refresh_token;
         const response = await axios({
@@ -111,14 +112,14 @@ const loginFirebase = async () => {
             params: {
                 ...googleApiConfig,
                 refresh_token: refreshToken,
-                grant_type: 'refresh_token'
-            }
+                grant_type: 'refresh_token',
+            },
         });
         const idToken = response.data.id_token;
         await verifyCredential(idToken);
     } catch (error) {
         log(warn("Please run pastecat init to refresh your tokens!"));
-        throw error;
+        throw(error);
     }
 };
 
@@ -129,14 +130,15 @@ const handleInit = async () => {
         headers: {'Content-Type': 'application/x-www-form-urlencoded'},
         params: {
             client_id: googleApiConfig.client_id,
-            scope: 'email profile'
-        }
+            scope: 'email profile',
+        },
     });
     const userCode = response.data.user_code;
     const verifyUrl = response.data.verification_url;
     const deviceCode = response.data.device_code;
     const interval = response.data.interval;
     const expiration = response.data.expires_in;
+
     log("Enter code: " + success(userCode) + " at " + link(verifyUrl));
     log("to verify your account.");
 
@@ -144,8 +146,9 @@ const handleInit = async () => {
     const poll = await pollForToken(deviceCode, interval, maxRetries);
     const refreshToken = poll.data.refresh_token;
     
-    const content = JSON.stringify({refresh_token: refreshToken,});
-    await fs.writeFile(os.homedir() + '/.pastecat.json', content);
+    const filename = os.homedir() + '/.pastecat.json';
+    const content = JSON.stringify({ refresh_token: refreshToken });
+    await fs.writeFile(filename, content);
 };
 
 // commands
